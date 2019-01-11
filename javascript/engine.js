@@ -18,6 +18,10 @@ var Engine = (
 		
 		var objects = [];
 		var bullets = [];
+		var enemies = [];
+		
+		//sets keys pressed 
+		var keys_pressed = [];
 		
 		//stores cursor's position from the top left corner; x corresponds to left-right; y corresponds to up-down
 		var cursor = {
@@ -33,7 +37,7 @@ var Engine = (
 		var frame_count = 0;
 		
 		// physics 
-		var gravity = -0.1;
+		var gravity = -0.02;
 		
 		//for the game
 		var difficulty    = 0; //good luck
@@ -53,8 +57,12 @@ var Engine = (
 			get boundingRectangle() {return boundingRectangle},
 			get cursor_x() { return cursor.x; },
 			get cursor_y() { return cursor.y; },
+			get keys_pressed() { return keys_pressed; },
+			
 			get bullets() { return bullets; },
+			get enemies() { return enemies; },
 			get gravity() { return gravity; },
+			
 			
 			initialize: function()
 			{
@@ -111,6 +119,13 @@ var Engine = (
 					frame_count = 0;
 				}, 1000);
 			},
+			
+			spawn_enemy: function()
+			{
+				// from the right 
+				var enemy = new Enemy(boundingRectangle.max_x, boundingRectangle.min_y + 10, -0.5, 0.01);
+				enemies.push(enemy);
+			},
 			// animation
 			animate: function(time)
 			{
@@ -138,7 +153,8 @@ var Engine = (
 			{
 				// call canvas handler
 				Canvas.draw(lapse);
-				
+				bullets = bullets.filter(function(bullet) {return bullet.active;}); // filter out inactive ones 
+				enemies = enemies.filter(function(enemy) {return enemy.active;});
 			},
 			
 			toggle_pause: function()
@@ -147,37 +163,70 @@ var Engine = (
 			},
 			
 			// handle key
-			handle_key: function()
+			handle_keydown: function()
 			{
 				switch (event.keyCode) 
 				{
 					case 87:
 					case 38:
 						Engine.log("UP key pressed");
-						Player.move_jump();
+						keys_pressed["up"] = true;
 						break;
 
 					case 83:
 					case 40:
 						Engine.log("DOWN key pressed");
-						Player.move_stop();
+						keys_pressed["down"] = true;
 						break;
 						
 					case 65:
 					case 37:
 						Engine.log("LEFT key pressed");
-						Player.move_backward();
+						keys_pressed["left"] = true;
 						break;
 
 					case 68:
 					case 39:
 						Engine.log("RIGHT key pressed");
-						Player.move_forward();
+						keys_pressed["right"] = true;
 						break;
 					case 32: 
 						Engine.log("FIRE(space) key pressed");
-						bullets.push(Player.fire());
+						keys_pressed["space"] = true;
+						break;
+				}
+			},
+			
+			handle_keyup: function()
+			{
+				switch (event.keyCode) 
+				{
+					case 87:
+					case 38:
+						Engine.log("UP key pressed");
+						keys_pressed["up"] = false;
+						break;
+
+					case 83:
+					case 40:
+						Engine.log("DOWN key pressed");
+						keys_pressed["down"] = false;
+						break;
 						
+					case 65:
+					case 37:
+						Engine.log("LEFT key pressed");
+						keys_pressed["left"] = false;
+						break;
+
+					case 68:
+					case 39:
+						Engine.log("RIGHT key pressed");
+						keys_pressed["right"] = false;
+						break;
+					case 32: 
+						Engine.log("FIRE(space) key pressed");
+						keys_pressed["space"] = false;
 						break;
 				}
 			},
@@ -195,7 +244,6 @@ var Engine = (
 					Engine.log("MOVETO(mouse right) clicked");
 				}
 			},
-			// physics
 			
 		}
 	}

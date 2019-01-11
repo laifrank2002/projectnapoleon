@@ -8,6 +8,8 @@ var Player = (
 		
 		var image = ["16th_light_dragoons1","16th_light_dragoons1","16th_light_dragoons1"];
 		var shadow_image = ["shadow1","shadow1","shadow1"];
+		
+		
 		var image_number = 0;
 		var animation_delay = 50;
 		var animation_number = 0;
@@ -23,10 +25,10 @@ var Player = (
 		var friction = 0.2; // 0 to 1
 		var brake_friction = 0.5; // faster braking
 		var angle = Math.PI; // angle facing 
-		var acceleration = 0.3;
+		var acceleration = 0.07;
 		
 		var mass = 10;
-		var jump_force = 12;
+		var jump_force = 2.2;
 		// hard coded limits for now, change later
 		var boundingRectangle = {
 			min_x: 50,
@@ -114,18 +116,6 @@ var Player = (
 				}
 			},
 			
-			move_forward: function()
-			{
-				velocity_x = acceleration;
-				Player.set_direction("right");
-			},
-			
-			move_backward: function()
-			{
-				velocity_x = -acceleration;
-				Player.set_direction("left");
-			},
-			
 			move_stop: function()
 			{
 				velocity_x = velocity_x * (1-brake_friction);
@@ -133,11 +123,7 @@ var Player = (
 			
 			move_jump: function()
 			{
-				// only jump on the ground, man!
-				if (y <= boundingRectangle.min_y)
-				{
-					velocity_y += jump_force/mass;
-				}
+				
 			},
 			
 			fire: function()
@@ -176,10 +162,35 @@ var Player = (
 			// gets new position in relation to time 
 			get_new_position(lapse)
 			{
+				// key positions
+				if (Engine.keys_pressed["left"])
+				{
+					velocity_x += -acceleration;
+					Player.set_direction("left");
+				}
+				if (Engine.keys_pressed["right"])
+				{
+					velocity_x += acceleration;
+					Player.set_direction("right");
+				}
+				if (Engine.keys_pressed["up"])
+				{
+					// only jump on the ground, man!
+					if (y <= boundingRectangle.min_y)
+					{
+						velocity_y += jump_force/mass;
+					}
+				}
+				if (Engine.keys_pressed["space"])
+				{
+					Engine.bullets.push(Player.fire());
+				}
 				
 				// friction - only for contact, normal!
 				
-				velocity_x = velocity_x + Player.get_friction().x;
+					velocity_x = velocity_x + Player.get_friction().x;
+				
+				
 				// gravity
 				velocity_y = velocity_y + Engine.gravity;
 				
@@ -199,6 +210,15 @@ var Player = (
 					x: -velocity_x * friction,
 					y: -velocity_y * friction,
 				};
+			},
+			
+			is_player_on_ground: function()
+			{
+				if (y === boundingRectangle.min_y)
+				{
+					return true;
+				}
+				return false;
 			},
 		}
 	}

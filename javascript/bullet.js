@@ -4,7 +4,7 @@ function Bullet(x, y, cx, cy, force) {
     this.y = y;
     
 	this.mass = 1;
-	this.force = force || 7.0;
+	this.force = force || 1.7;
 	
     this.active = true;
     this.image = "bullet1";
@@ -49,6 +49,8 @@ Bullet.prototype.get_new_position = function(lapse) {
     if  (this.y < Engine.boundingRectangle.min_y)
 	{
 		this.y = Engine.boundingRectangle.min_y;
+		this.vector.x = 0;
+		this.active = false;
 	}
     if (this.x > Engine.boundingRectangle.max_x || this.y > Engine.boundingRectangle.max_y) {
         this.active = false;

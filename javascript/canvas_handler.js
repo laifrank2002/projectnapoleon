@@ -54,9 +54,17 @@ var Canvas = (
 				
 				// draw bullets 
 				var bullets = Engine.bullets;
-				bullets = bullets.filter(function(bullet) {return bullet.active;}); // filter out inactive ones 
 				bullets.forEach(function(bullet) {
 					with (bullet) {
+						get_new_position(lapse);
+						draw(context);
+					}
+				});
+				
+				//draw the enemies
+				var enemies = Engine.enemies;
+				enemies.forEach(function(enemy) {
+					with (enemy) {
 						get_new_position(lapse);
 						draw(context);
 					}

@@ -9,7 +9,8 @@ var key_handler = (
 				if(!initialized)
 				{
 					Engine.log("Initializing key handler...");
-					addEventListener("keydown", Engine.handle_key); // sort of like threads
+					addEventListener("keydown", Engine.handle_keydown); // 
+					addEventListener("keyup", Engine.handle_keyup); // up and down to handle > 1 keys at a time
 					initialized = true;
 				}
 				else
